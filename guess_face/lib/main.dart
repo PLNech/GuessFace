@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:algolia/algolia.dart';
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
 
@@ -126,14 +125,19 @@ class GuessState extends State<GuessWidget> {
   _buildRow(String name, String guessName) {
     final isRightAnswer = (name == guessName);
     return ListTile(
-        title: Text(name, style: Theme.of(context).textTheme.display1),
-        onTap: () => {
+      title: RaisedButton(
+        onPressed: () => {
               setState(() {
                 round++;
                 score += isRightAnswer ? 10 : -10;
                 guessData = MyApp._loadAlgolians();
               })
-            });
+            },
+        color: Colors.blue,
+        padding: const EdgeInsets.all(10.0),
+        child: Text(name, style: Theme.of(context).textTheme.button),
+      ),
+    );
   }
 
   String _buildScoreString() {
