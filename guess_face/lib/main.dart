@@ -49,13 +49,38 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'GuessFace',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Guess an Algolian 🙈'),
-        ),
-        body: Center(child: GuessWidget()),
-      ),
+      home: HomeWidget(),
+      routes: <String, WidgetBuilder>{
+        '/game': (BuildContext context) => Scaffold(
+              appBar: AppBar(
+                title: Text('Guess an Algolian 🙈'),
+              ),
+              body: Center(child: GuessWidget()),
+            )
+      },
     );
+  }
+}
+
+class HomeWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: Text('Guess that Face 🙃')),
+        body: Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+              Text("Can you guess your colleagues' names?",
+                  style: Theme.of(context).textTheme.headline,
+                  textAlign: TextAlign.center),
+              Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+              RaisedButton(
+                  child: Text("Play 🔥",
+                      style: Theme.of(context).textTheme.button),
+                  onPressed: () => {Navigator.of(context).pushNamed("/game")}),
+            ])));
   }
 }
 
