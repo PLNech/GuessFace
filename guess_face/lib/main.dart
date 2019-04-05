@@ -8,6 +8,7 @@ import 'package:transparent_image/transparent_image.dart';
 void main() => runApp(MyApp());
 
 const imageWidth = 200;
+const defaultHint = "Hint";
 
 class MyApp extends StatelessWidget {
   static final Algolia _algolia = Algolia.init(
@@ -91,7 +92,10 @@ class GuessWidget extends StatefulWidget {
 
 class GuessState extends State<GuessWidget> {
   var score = 0;
+  var gotHint = false;
+  var roundPoints = 10;
   var round = 0;
+  var hintText = defaultHint;
   var guessData;
 
   @override
@@ -125,7 +129,14 @@ class GuessState extends State<GuessWidget> {
                 Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
                 Text(_buildScoreString(),
                     style: Theme.of(context).textTheme.subhead),
-                Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+                FlatButton(
+                  child: Text(hintText),
+                  onPressed: () => {setState(() {
+                    var hit = guessData.data.guessMe.data;
+                        hintText = "${hit['jobTitle']} in ${hit['division']}";
+                        roundPoints = 5;
+                  })},
+                ),
                 Expanded(
                     child: _buildSuggestionList(
                         data.options, data.guessMe.data["name"]))
@@ -140,7 +151,7 @@ class GuessState extends State<GuessWidget> {
   _buildSuggestionList(List<String> objects, String guessName) {
     return ListView.builder(
       itemCount: objects.length,
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(4.0),
       itemBuilder: (context, i) {
         return _buildRow(objects[min(i, objects.length - 1)], guessName);
       },
@@ -154,7 +165,8 @@ class GuessState extends State<GuessWidget> {
         onPressed: () => {
               setState(() {
                 round++;
-                score += isRightAnswer ? 10 : -10;
+                score += isRightAnswer ? roundPoints : -10;
+                hintText = defaultHint;
                 guessData = MyApp._loadAlgolians();
               })
             },
