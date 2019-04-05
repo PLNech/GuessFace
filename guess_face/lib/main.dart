@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:algolia/algolia.dart';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:transparent_image/transparent_image.dart';
 
 void main() => runApp(MyApp());
 
@@ -81,8 +83,11 @@ class GuessState extends State<GuessWidget> {
           return Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(children: <Widget>[
-                Image.network(data.imageURL,
-                    width: imageWidth.toDouble(), fit: BoxFit.fill),
+                FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: data.imageURL,
+                    fit: BoxFit.fill,
+                    width: imageWidth.toDouble()),
                 Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
                 Text('Guess the name 🧐',
                     style: Theme.of(context).textTheme.headline),
