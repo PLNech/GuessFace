@@ -46,8 +46,20 @@ class MyApp extends StatelessWidget {
     throw new Exception("No algolian has valid image!!1!");
   }
 
+  Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
+    return Center(
+      child: new CircularProgressIndicator(
+        value: null,
+        strokeWidth: 7.0,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+      return getErrorWidget(context, errorDetails);
+    };
     return MaterialApp(
       title: 'GuessFace',
       home: HomeWidget(),
