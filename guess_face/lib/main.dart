@@ -64,16 +64,20 @@ class GuessWidget extends StatefulWidget {
 }
 
 class GuessState extends State<GuessWidget> {
+  var score = 0;
+  var round = 0;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<GuessData>(
-        future: MyApp._loadAlgolians(),
+        future: MyApp._loadAlgolians(), //TODO: Avoid reloading at each build?
         builder: (context, guessData) {
           if (guessData.hasError) {
             debugPrint("ERROR! ${guessData.error}");
+            return Text(guessData.error);
           }
+
           var data = guessData.data;
-          debugPrint("Ready to build list for data: $data");
           return Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(children: <Widget>[
@@ -83,37 +87,67 @@ class GuessState extends State<GuessWidget> {
                 Text('Guess the name 🧐',
                     style: Theme.of(context).textTheme.headline),
                 Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-                Expanded(child: _buildSuggestionList(data.options))
+                Text(_buildScoreString(),
+                    style: Theme.of(context).textTheme.subhead),
+                Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+                Expanded(
+                    child: _buildSuggestionList(
+                        data.options, data.guessMe.data["name"]))
               ]));
         });
     /**
-     * - Load a user, and 3 random names
      * - Keep a currentScore
      * - Keep a currentTurn (at 5, the game should display end screen)
      */
   }
 
-  _buildSuggestionList(List<String> objects) {
+  _buildSuggestionList(List<String> objects, String guessName) {
     return ListView.builder(
       itemCount: objects.length,
       padding: const EdgeInsets.all(16.0),
       itemBuilder: (context, i) {
-        return _buildRow(objects[min(i, objects.length - 1)]);
+        return _buildRow(objects[min(i, objects.length - 1)], guessName);
       },
     );
   }
 
-  _buildRow(String name) {
+  _buildRow(String name, String guessName) {
+    final isRightAnswer = (name == guessName);
     return ListTile(
-        title: Text(name,
-            style: Theme.of(context).textTheme.display1));
+        title: Text(name, style: Theme.of(context).textTheme.display1),
+        onTap: () => {
+              setState(() {
+                round++;
+                score += isRightAnswer ? 10 : -10;
+              })
+            });
+  }
+
+  String _buildScoreString() {
+    String emoji;
+    if (round == 0) {
+      return "Round 1! 🚀";
+    }
+    var successfulRounds = (score / 10);
+    if (successfulRounds >= round * 0.9) {
+      emoji = '💯'; // Perfect
+    } else if (successfulRounds >= round / 2) {
+      emoji = '🎯'; // At least half good
+    } else if (successfulRounds >= round / 3) {
+      emoji = '😐'; // At least half good
+    } else if (successfulRounds >= round / 4) {
+      emoji = '🤔';
+    } else {
+      emoji = '😭';
+    }
+    return 'Round ${round + 1} | Score: $score $emoji';
   }
 }
 
 class GuessData {
   final String imageURL;
   final AlgoliaObjectSnapshot guessMe;
-  final List<dynamic> options;
+  final List<dynamic> options; //TODO: How can I type this right?
 
   @override
   String toString() {
