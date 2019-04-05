@@ -68,11 +68,18 @@ class GuessWidget extends StatefulWidget {
 class GuessState extends State<GuessWidget> {
   var score = 0;
   var round = 0;
+  var guessData;
+
+  @override
+  void initState() {
+    super.initState();
+    guessData = MyApp._loadAlgolians();
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<GuessData>(
-        future: MyApp._loadAlgolians(), //TODO: Avoid reloading at each build?
+        future: guessData,
         builder: (context, guessData) {
           if (guessData.hasError) {
             debugPrint("ERROR! ${guessData.error}");
@@ -124,6 +131,7 @@ class GuessState extends State<GuessWidget> {
               setState(() {
                 round++;
                 score += isRightAnswer ? 10 : -10;
+                guessData = MyApp._loadAlgolians();
               })
             });
   }
