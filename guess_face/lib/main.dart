@@ -45,13 +45,30 @@ class GuessState extends State<GuessWidget> {
     return FutureBuilder<AlgoliaQuerySnapshot>(
         future: MyApp._loadAlgolians(),
         builder: (context, snapshot) {
-          return Text('Loaded ${snapshot.data.nbHits} algolians!');
+          return Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(children: <Widget>[
+                Text('Loaded ${snapshot.data.nbHits} algolians!'),
+                Expanded(child: _buildSuggestionList(snapshot))
+              ]));
         });
-    // TODO: implement build
     /**
      * - Load a user, and 3 random names
      * - Keep a currentScore
      * - Keep a currentTurn (at 5, the game should display end screen)
      */
+  }
+
+  _buildSuggestionList(AsyncSnapshot<AlgoliaQuerySnapshot> objects) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) {
+        return _buildRow(objects.data.hits[i].data);
+      },
+    );
+  }
+
+  _buildRow(Map<String, dynamic> hit) {
+    return ListTile(title: Text(hit["name"]));
   }
 }
