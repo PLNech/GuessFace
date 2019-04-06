@@ -8,8 +8,9 @@ import 'package:transparent_image/transparent_image.dart';
 void main() => runApp(MyApp());
 
 const imageWidth = 200;
-const defaultHint = "Hint";
-const defaultHint = 10;
+const defaultHint = "Need a Hint?";
+const defaultHeadline = "Can you guess your colleagues' names?";
+const defaultPoints = 10;
 
 class MyApp extends StatelessWidget {
   static final Algolia _algolia = Algolia.init(
@@ -65,18 +66,21 @@ class MyApp extends StatelessWidget {
       title: 'GuessFace',
       home: HomeWidget(),
       routes: <String, WidgetBuilder>{
-        '/game': (BuildContext context) => Scaffold(
-              appBar: AppBar(
-                title: Text('Guess an Algolian 🙈'),
-              ),
-              body: Center(child: GuessWidget()),
-            )
+        '/game': (BuildContext context) => GuessWidget()
       },
     );
   }
 }
 
-class HomeWidget extends StatelessWidget {
+class HomeWidget extends StatefulWidget {
+  @override
+  HomeState createState() => new HomeState();
+}
+
+class HomeState extends State<HomeWidget> {
+  var highScore = 0;
+  var headline = defaultHeadline;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,15 +90,34 @@ class HomeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-              Text("Can you guess your colleagues' names?",
-                  style: Theme.of(context).textTheme.headline,
-                  textAlign: TextAlign.center),
-              Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+                  _buildScoreText(),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+                  Text(headline,
+                      style: Theme.of(context).textTheme.headline,
+                      textAlign: TextAlign.center),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
               RaisedButton(
                   child: Text("Play 🔥",
                       style: Theme.of(context).textTheme.button),
-                  onPressed: () => {Navigator.of(context).pushNamed("/game")}),
+                  onPressed: () {
+                    _navigateToGame(context);
+                  }),
             ])));
+  }
+
+  void _navigateToGame(BuildContext context) async {
+    final score = await Navigator.of(context).pushNamed("/game");
+    debugPrint("Got score $score!");
+    setState(() {
+      highScore = max(score, highScore);
+      headline = "Play again?";
+    });
+  }
+
+  _buildScoreText() {
+    return Text("High score: $highScore",
+        style: highScore == 0 ? Theme.of(context).textTheme.body1 : Theme.of(context).textTheme.display2,
+        textAlign: TextAlign.center);
   }
 }
 
@@ -127,8 +150,17 @@ class GuessState extends State<GuessWidget> {
             return Text(guessData.error);
           }
 
-          var data = guessData.data;
-          return Padding(
+          return _buildGameScreen(context, guessData.data);
+        });
+  }
+
+  Scaffold _buildGameScreen(BuildContext context, GuessData data) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Guess an Algolian 🙈'),
+      ),
+      body: Center(
+          child: Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(children: <Widget>[
                 FadeInImage.memoryNetwork(
@@ -144,21 +176,23 @@ class GuessState extends State<GuessWidget> {
                     style: Theme.of(context).textTheme.subhead),
                 FlatButton(
                   child: Text(hintText),
-                  onPressed: () => {setState(() {
-                    var hit = guessData.data.guessMe.data;
-                        hintText = "${hit['jobTitle']} in ${hit['division']}";
-                        roundPoints = 5;
-                  })},
+                  onPressed: () => {
+                        setState(() {
+                          var hit = data.guessMe.data;
+                          hintText = "${hit['jobTitle']} in ${hit['division']}";
+                          roundPoints = 5;
+                        })
+                      },
                 ),
                 Expanded(
                     child: _buildSuggestionList(
-                        data.options, data.guessMe.data["name"]))
-              ]));
-        });
-    /**
-     * - Keep a currentScore
-     * - Keep a currentTurn (at 5, the game should display end screen)
-     */
+                        data.options, data.guessMe.data["name"])),
+                FlatButton(
+                  child: Text("Stop playing"),
+                  onPressed: () => {Navigator.of(context).pop(score)},
+                )
+              ]))),
+    );
   }
 
   _buildSuggestionList(List<String> objects, String guessName) {
