@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
     throw new Exception("No algolian has valid image!!1!");
   }
 
+  //FIXME: Don't hide error with a progressindicator, rather fix async issue
   Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
     return Center(
       child: new CircularProgressIndicator(
@@ -107,7 +108,7 @@ class HomeState extends State<HomeWidget> {
 
   void _navigateToGame(BuildContext context) async {
     final score = await Navigator.of(context).pushNamed("/game");
-    debugPrint("Got score $score!");
+    debugPrint("Got score $score!"); //FIXME: Get score on back press / top button
     setState(() {
       highScore = max(score, highScore);
       headline = "Play again?";
