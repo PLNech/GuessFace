@@ -9,6 +9,7 @@ void main() => runApp(MyApp());
 
 const imageWidth = 200;
 const defaultHint = "Hint";
+const defaultHint = 10;
 
 class MyApp extends StatelessWidget {
   static final Algolia _algolia = Algolia.init(
@@ -105,7 +106,7 @@ class GuessWidget extends StatefulWidget {
 class GuessState extends State<GuessWidget> {
   var score = 0;
   var gotHint = false;
-  var roundPoints = 10;
+  var roundPoints = defaultPoints;
   var round = 0;
   var hintText = defaultHint;
   var guessData;
@@ -179,6 +180,7 @@ class GuessState extends State<GuessWidget> {
                 round++;
                 score += isRightAnswer ? roundPoints : -10;
                 hintText = defaultHint;
+                roundPoints = defaultPoints;
                 guessData = MyApp._loadAlgolians();
               })
             },
