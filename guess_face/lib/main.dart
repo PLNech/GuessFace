@@ -169,13 +169,14 @@ class GuessState extends State<GuessWidget> {
                     image: data.imageURL,
                     fit: BoxFit.fill,
                     width: imageWidth.toDouble()),
-                Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
                 Text('Guess the name 🧐',
                     style: Theme.of(context).textTheme.headline),
-                Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+                Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
                 Text(_buildScoreString(),
                     style: Theme.of(context).textTheme.subhead),
                 FlatButton(
+                  padding: EdgeInsets.all(0.0),
                   child: Text(hintText),
                   onPressed: () => {
                         setState(() {
@@ -199,7 +200,6 @@ class GuessState extends State<GuessWidget> {
   _buildSuggestionList(List<String> objects, String guessName) {
     return ListView.builder(
       itemCount: objects.length,
-      padding: const EdgeInsets.all(4.0),
       itemBuilder: (context, i) {
         return _buildRow(objects[min(i, objects.length - 1)], guessName);
       },
@@ -209,6 +209,7 @@ class GuessState extends State<GuessWidget> {
   _buildRow(String name, String guessName) {
     final isRightAnswer = (name == guessName);
     return ListTile(
+      contentPadding: EdgeInsets.all(0.0),
       title: RaisedButton(
         onPressed: () => {
               setState(() {
@@ -220,7 +221,6 @@ class GuessState extends State<GuessWidget> {
               })
             },
         color: Colors.blue,
-        padding: const EdgeInsets.all(10.0),
         child: Text(name, style: Theme.of(context).textTheme.button),
       ),
     );
