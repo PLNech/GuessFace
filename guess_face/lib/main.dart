@@ -91,12 +91,12 @@ class HomeState extends State<HomeWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  _buildScoreText(),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
-                  Text(headline,
-                      style: Theme.of(context).textTheme.headline,
-                      textAlign: TextAlign.center),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+              _buildScoreText(),
+              Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+              Text(headline,
+                  style: Theme.of(context).textTheme.headline,
+                  textAlign: TextAlign.center),
+              Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
               RaisedButton(
                   child: Text("Play 🔥",
                       style: Theme.of(context).textTheme.button),
