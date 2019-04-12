@@ -66,9 +66,9 @@ class MyApp extends StatelessWidget {
     };
     return MaterialApp(
       title: 'GuessFace',
-      home: HomeWidget(),
+      home: Scaffold(body: HomeWidget()),
       routes: <String, WidgetBuilder>{
-        '/game': (BuildContext context) => GuessWidget()
+        '/game': (BuildContext context) => Scaffold(body: GuessWidget())
       },
     );
   }
@@ -220,19 +220,39 @@ class GuessState extends State<GuessWidget> {
     return ListTile(
       contentPadding: EdgeInsets.all(0.0),
       title: RaisedButton(
-        onPressed: () => {
-              setState(() {
-                round++;
-                score += isRightAnswer ? roundPoints : -10;
-                hintText = defaultHint;
-                roundPoints = defaultPoints;
-                guessData = MyApp._loadAlgolians();
-              })
-            },
+        onPressed: () => _updateScore(isRightAnswer, guessName),
         color: Colors.blue,
         child: Text(name, style: Theme.of(context).textTheme.button),
       ),
     );
+  }
+
+  Set<void> _updateScore(bool isRightAnswer, String guessName) {
+    var message = isRightAnswer
+        ? Text("Well played ✨")
+        : new RichText(
+            text: new TextSpan(
+              style: new TextStyle(fontSize: 18.0),
+              children: <TextSpan>[
+                new TextSpan(text: "Actually, this was "),
+                new TextSpan(
+                    text: guessName,
+                    style: new TextStyle(fontWeight: FontWeight.bold)),
+                new TextSpan(text: " 🙃"),
+              ],
+            ),
+          );
+    Scaffold.of(context).showSnackBar(SnackBar(
+        content: message, duration: Duration(seconds: isRightAnswer ? 1 : 5)));
+    return {
+      setState(() {
+        round++;
+        score += isRightAnswer ? roundPoints : -10;
+        hintText = defaultHint;
+        roundPoints = defaultPoints;
+        guessData = MyApp._loadAlgolians();
+      })
+    };
   }
 
   String _buildScoreString() {
