@@ -108,7 +108,8 @@ class HomeState extends State<HomeWidget> {
 
   void _navigateToGame(BuildContext context) async {
     final score = await Navigator.of(context).pushNamed("/game");
-    debugPrint("Got score $score!"); //FIXME: Get score on back press / top button
+    //FIXME: Get score on back press / top button
+    debugPrint("Got score $score!");
     setState(() {
       highScore = max(score, highScore);
       headline = "Play again?";
@@ -116,8 +117,9 @@ class HomeState extends State<HomeWidget> {
   }
 
   _buildScoreText() {
+    var textTheme = Theme.of(context).textTheme;
     return Text("High score: $highScore",
-        style: highScore == 0 ? Theme.of(context).textTheme.body1 : Theme.of(context).textTheme.display2,
+        style: highScore == 0 ? textTheme.body1 : textTheme.display2,
         textAlign: TextAlign.center);
   }
 }
@@ -177,7 +179,7 @@ class GuessState extends State<GuessWidget> {
                     style: Theme.of(context).textTheme.subhead),
                 FlatButton(
                   padding: EdgeInsets.all(0.0),
-                  child: Text(hintText),
+                  child: Text(hintText, style: _getStyleForHint()),
                   onPressed: () => {
                         setState(() {
                           var hit = data.guessMe.data;
@@ -195,6 +197,12 @@ class GuessState extends State<GuessWidget> {
                 )
               ]))),
     );
+  }
+
+  TextStyle _getStyleForHint() {
+    return hintText == defaultHint
+        ? TextStyle(decoration: TextDecoration.underline)
+        : null;
   }
 
   _buildSuggestionList(List<String> objects, String guessName) {
