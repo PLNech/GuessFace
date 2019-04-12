@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
 
     // Select an Algolian with valid image
     for (var algolian in algolians) {
+      if (algolian.data["gravatar"] == null) continue;
       // "https://www.gravatar.com/avatar/7f6d9be8b64f32120bd6ef07e3b3b501?d=404";
       var gravatarURL = algolian.data["gravatar"] + "?s=$imageWidth&d=404";
       if ((await http.get(gravatarURL)).statusCode == 200) {
