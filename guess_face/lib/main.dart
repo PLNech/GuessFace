@@ -69,8 +69,7 @@ class MyApp extends StatelessWidget {
       title: 'GuessFace',
       home: Scaffold(body: HomeWidget()),
       theme: ThemeData(
-        primaryColor: ColorAlgoliaBlue,
-      ),
+          accentColor: ColorAlgoliaBlue, primaryColor: ColorAlgoliaBlue),
       routes: <String, WidgetBuilder>{
         '/game': (BuildContext context) => Scaffold(body: GuessWidget())
       },
