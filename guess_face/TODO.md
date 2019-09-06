@@ -9,3 +9,6 @@ https://flutter.dev/docs/get-started/flutter-for/android-devs#how-do-i-show-the-
 - Display roundPoints before/after hint
 - HighScore: Saved from game, displayed at boot
 https://flutter.dev/docs/get-started/flutter-for/android-devs#how-do-i-access-shared-preferences
+
+# Better gameplay
+- Hard mode: once you get someone right, never guess him again!
