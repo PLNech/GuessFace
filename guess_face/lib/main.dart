@@ -8,9 +8,10 @@ import 'package:transparent_image/transparent_image.dart';
 void main() => runApp(MyApp());
 
 const imageWidth = 200;
+const defaultPoints = 10;
 const defaultHint = "Need a Hint?";
 const defaultHeadline = "Can you guess your colleagues' names?";
-const defaultPoints = 10;
+const ColorAlgoliaBlue = const Color(0xFF5468FF);
 
 class MyApp extends StatelessWidget {
   static final Algolia _algolia = Algolia.init(
@@ -67,6 +68,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'GuessFace',
       home: Scaffold(body: HomeWidget()),
+      theme: ThemeData(
+        primaryColor: ColorAlgoliaBlue,
+      ),
       routes: <String, WidgetBuilder>{
         '/game': (BuildContext context) => Scaffold(body: GuessWidget())
       },
@@ -173,21 +177,18 @@ class GuessState extends State<GuessWidget> {
                     fit: BoxFit.fill,
                     width: imageWidth.toDouble()),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-                Text('Guess the name 🧐',
-                    style: Theme.of(context).textTheme.headline),
-                Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
                 Text(_buildScoreString(),
                     style: Theme.of(context).textTheme.subhead),
                 FlatButton(
                   padding: EdgeInsets.all(0.0),
                   child: Text(hintText, style: _getStyleForHint()),
                   onPressed: () => {
-                        setState(() {
-                          var hit = data.guessMe.data;
-                          hintText = "${hit['jobTitle']} in ${hit['division']}";
-                          roundPoints = 5;
-                        })
-                      },
+                    setState(() {
+                      var hit = data.guessMe.data;
+                      hintText = "${hit['jobTitle']} in ${hit['division']}";
+                      roundPoints = 5;
+                    })
+                  },
                 ),
                 Expanded(
                     child: _buildSuggestionList(
@@ -218,11 +219,13 @@ class GuessState extends State<GuessWidget> {
   _buildRow(String name, String guessName) {
     final isRightAnswer = (name == guessName);
     return ListTile(
-      contentPadding: EdgeInsets.all(0.0),
-      title: RaisedButton(
+      contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+      title: OutlineButton(
+        borderSide: BorderSide(color: ColorAlgoliaBlue, width: 3.0),
+        padding: EdgeInsets.all(0.0),
         onPressed: () => _updateScore(isRightAnswer, guessName),
-        color: Colors.blue,
-        child: Text(name, style: Theme.of(context).textTheme.button),
+        child: Text(name,
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
       ),
     );
   }
